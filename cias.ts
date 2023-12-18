@@ -9,8 +9,8 @@ const rpc = "https://rpc-1.celestia.nodes.guru"
 //-------cias挖矿程序-----------
 // ---------------------配置--------------------------
 const KEY_PATH = "../temp/tempkeys"
-// 1958
-const GAS_AMOUNT = 958
+//958 1958
+const GAS_AMOUNT = 58
 // 循环运行次数
 const RUN_TIMES = 3
 
@@ -31,7 +31,7 @@ const runAll = async (): Promise<void> => {
 
     const aliceSigner: OfflineDirectSigner = await getAliceSignerFromMnemonic()
     const address = (await aliceSigner.getAccounts())[0].address
-    console.log("address from signer", address)
+    console.log("address:", address)
     const signingClient = await SigningStargateClient.connectWithSigner(rpc, aliceSigner, {
         // gasPrice: {
         //     denom: "utia",
@@ -51,7 +51,7 @@ const runAll = async (): Promise<void> => {
         [{ denom: "utia", amount: "1000" }],
         // "auto",
         {
-            amount: [{ denom: "utia", amount: GAS_AMOUNT }],
+            amount: [{ denom: "utia", amount: GAS_AMOUNT + "" }],
             gas: "74110",
         },
         "ZGF0YToseyJvcCI6Im1pbnQiLCJhbXQiOjEwMDAwLCJ0aWNrIjoiY2lhcyIsInAiOiJjaWEtMjAifQ=="
@@ -62,10 +62,36 @@ const runAll = async (): Promise<void> => {
     console.log("用时:", timeUsed, "秒")
 }
 
-Promise.all(
-    new Array(RUN_TIMES).fill(0).map(async (v, index) => {
-        console.log("执行进度: ", `${index + 1}/${RUN_TIMES}`, "-------------------------")
-        return runAll()
-    })
-)
+// async function test() {
+//     return new Promise((resolve, reject) => {
+//         setTimeout(() => {
+//             reject()
+//             // resolve(undefined)
+//         }, 2000)
+//     })
+// }
+async function run_recursion() {
+    // new Array(RUN_TIMES).fill(0).map(async (v, index) => {})
+    for (let i = 0; i < RUN_TIMES; i++) {
+        console.log("---------------------------")
+        console.log("开始执行: ", `${i + 1}/${RUN_TIMES}`, "现在时间", new Date().toLocaleTimeString())
+        console.log("---------------------------")
+        await runAll()
+    }
+}
+
+run_recursion()
+
+// let count = 0
+// let successCount = 0
+// if (RUN_TIMES > 0) {
+//     runAll().then
+// }
+
+// Promise.all(
+//     new Array(RUN_TIMES).fill(0).map(async (v, index) => {
+//         console.log("执行进度: ", `${index + 1}/${RUN_TIMES}`, "-------------------------")
+//         return runAll()
+//     })
+// )
 // runAll()
