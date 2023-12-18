@@ -1,0 +1,7 @@
+{
+    "cias": {
+        "run_times": 3,
+        "gas_amount": 58,
+        "key_paths": ["../temp/tempkeys", "../temp/tempkeys2"]
+    }
+}
