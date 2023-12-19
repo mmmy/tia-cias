@@ -7,5 +7,5 @@ $ npm install
 ## Run it
 
 ```sh
-$ npm run cias
+$ npm run inj
 ```

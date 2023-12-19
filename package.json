@@ -4,7 +4,7 @@
   "description": "Experiment with simple CosmJS concepts.",
   "main": "index.js",
   "scripts": {
-    "cias": "ts-node cias.ts",
+    "injs": "ts-node injs.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "B9lab",
@@ -14,6 +14,10 @@
   },
   "dependencies": {
     "@cosmjs/stargate": "^0.32.1",
+    "@injectivelabs/networks": "^1.14.4",
+    "@injectivelabs/sdk-ts": "^1.14.4",
+    "@injectivelabs/ts-types": "^1.14.4",
+    "@injectivelabs/utils": "^1.14.4",
     "config": "^3.3.9"
   }
 }
