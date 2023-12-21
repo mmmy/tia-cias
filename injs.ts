@@ -8,10 +8,11 @@ import {
     TxGrpcClient,
     ChainRestAuthApi,
     createTransaction,
+    IndexerGrpcExplorerApi,
 } from "@injectivelabs/sdk-ts"
 import { MsgSend } from "@injectivelabs/sdk-ts"
 import { BigNumberInBase, DEFAULT_STD_FEE } from "@injectivelabs/utils"
-import { getNetworkInfo, Network } from "@injectivelabs/networks"
+import { getNetworkInfo, Network, getNetworkEndpoints } from "@injectivelabs/networks"
 // import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 // import { Tx } from "cosmjs-types/cosmos/tx/v1beta1/tx"
 import * as config from "config"
@@ -30,6 +31,24 @@ const getAliceSignerFromMnemonic = async (keyPath: string): Promise<OfflineDirec
     })
 }
 const network = getNetworkInfo(Network.Public)
+
+const endpoints = getNetworkEndpoints(Network.Public)
+const indexerGrpcExplorerApi = new IndexerGrpcExplorerApi(endpoints.explorer)
+const after = 0 /* optional pagination parameter */
+const limit = 1 /* optional pagination parameter */
+
+async function fetchBlockInfo() {
+    const t = new Date()
+    const blocks = await indexerGrpcExplorerApi.fetchBlocks({
+        after,
+        limit,
+    })
+    const tt = Math.round(+new Date() - +t) / 1000
+    console.log(blocks, '时间', tt)
+}
+
+// fetchBlockInfo()
+
 const runAll = async (keyPath: string): Promise<void> => {
     const startTime = new Date()
     const client = await StargateClient.connect(rpc)
@@ -78,16 +97,19 @@ const runAll = async (keyPath: string): Promise<void> => {
         denom: "inj",
     }
 
+    // const targetAddr = "inj15jy9vzmyy63ql9y6dvned2kdat2994x5f4ldu4"
+
     const msg = MsgSend.fromJSON({
         amount,
         srcInjectiveAddress: injectiveAddress,
         dstInjectiveAddress: injectiveAddress,
+        // dstInjectiveAddress: targetAddr,
     })
 
     /** Prepare the Transaction **/
     const { signBytes, txRaw } = createTransaction({
         message: msg,
-        memo: "ZGF0YToseyJwIjoiaW5qcmMtMjAiLCJvcCI6Im1pbnQiLCJ0aWNrIjoiSU5KUyIsImFtdCI6IjIwMDAifQ==",
+        memo: "ZGF0YToseyJwIjoiaW5qcmMtMjAiLCJvcCI6Im1pbnQiLCJ0aWNrIjoiSU5KUyIsImFtdCI6IjEwMDAifQ==",
         // fee: DEFAULT_STD_FEE,
         fee: {
             amount: [{ denom: "inj", amount: runConfig.gas_amount + "" }],

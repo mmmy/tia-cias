@@ -16,8 +16,8 @@ module.exports = {
         ],
     },
     inj: {
-        run_times: 1,
-        gas_amount: 0.00007e18,
+        run_times: 10,
+        gas_amount: 0.0000007e18,
         key_paths: [
             "../temp/tempkeys",
             "../temp/tempkeys2",
