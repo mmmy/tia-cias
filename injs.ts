@@ -16,6 +16,7 @@ import { getNetworkInfo, Network, getNetworkEndpoints } from "@injectivelabs/net
 // import { MsgSend } from "cosmjs-types/cosmos/bank/v1beta1/tx"
 // import { Tx } from "cosmjs-types/cosmos/tx/v1beta1/tx"
 import * as config from "config"
+import { BroadcastMode } from "@injectivelabs/core-proto-ts/cjs/cosmos/tx/v1beta1/service"
 
 const runConfig: { run_times: number; gas_amount: number; key_paths: string[] } = config.get("inj")
 console.log(runConfig)
@@ -30,7 +31,7 @@ const getAliceSignerFromMnemonic = async (keyPath: string): Promise<OfflineDirec
         prefix: "inj",
     })
 }
-const network = getNetworkInfo(Network.Public)
+const network = getNetworkInfo(Network.MainnetSentry)
 
 const endpoints = getNetworkEndpoints(Network.Public)
 const indexerGrpcExplorerApi = new IndexerGrpcExplorerApi(endpoints.explorer)
@@ -93,7 +94,7 @@ const runAll = async (keyPath: string): Promise<void> => {
     /** Account Details **/
     const accountDetails = await new ChainRestAuthApi(network.rest).fetchAccount(injectiveAddress)
     const amount = {
-        amount: new BigNumberInBase(0.00001).toWei().toFixed(),
+        amount: new BigNumberInBase(0.0001).toWei().toFixed(),
         denom: "inj",
     }
 
@@ -133,11 +134,11 @@ const runAll = async (keyPath: string): Promise<void> => {
     const txService = new TxGrpcClient(network.grpc)
 
     /** Simulate transaction */
-    // const simulationResponse = await txService.simulate(txRaw)
-    // console.log(`Transaction simulation response: ${JSON.stringify(simulationResponse.gasInfo)}`)
+    const simulationResponse = await txService.simulate(txRaw)
+    console.log(`Transaction simulation response: ${JSON.stringify(simulationResponse.gasInfo)}`)
 
     /** Broadcast transaction */
-    const txResponse = await txService.broadcast(txRaw)
+    const txResponse = await txService.broadcast(txRaw, {timeout: 1.5 * 1000, mode: BroadcastMode.BROADCAST_MODE_SYNC})
 
     if (txResponse.code !== 0) {
         console.log(`失败Transaction failed: ${txResponse.rawLog}`)
